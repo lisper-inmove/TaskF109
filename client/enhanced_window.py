@@ -1,116 +1,166 @@
 # enhanced_window.py
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
-from widgets.section_widget import SectionWidget
-from widgets.button_panel import ButtonPanel
+from loguru import logger
+from PyQt5.QtCore import Qt, QThreadPool, pyqtSlot
+from PyQt5.QtWidgets import (QAction, QFrame, QHBoxLayout, QLineEdit,
+                             QMainWindow, QMessageBox, QVBoxLayout, QWidget)
+
+from common import Commands, DeviceEnums
+from controller import Controller
 from utils.styles import get_enhanced_styles
+from widgets.button_panel import ButtonPanel
+from widgets.section_widget import SectionWidget
+from worker import BatchWorker
+
 
 class EnhancedWindow(QMainWindow):
     """增强版本，添加更多功能"""
+
     def __init__(self):
         super().__init__()
+        # 创建4个部分，使用自定义部件
+        self.sections = []
+        self.controller = Controller()
+        self.thread_pool = QThreadPool()  # 创建线程池
+        self.future_watchers = []
+        self.thread_pool.setMaxThreadCount(4)
         self.initUI()
-        
+
     def initUI(self):
-        self.setWindowTitle('增强版 PyQt 布局')
+        self.setWindowTitle('上位机程序')
         self.setGeometry(100, 100, 900, 700)
-        
+
         # 创建中心窗口部件
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        
+
         # 主垂直布局
         main_layout = QVBoxLayout()
         central_widget.setLayout(main_layout)
 
         # ========== 板卡区域 ========
         self.__init_boards(main_layout)
-        
-        # 添加分隔线
-        line = QFrame()
-        line.setFrameShape(QFrame.HLine)
-        line.setFrameShadow(QFrame.Sunken)
-        main_layout.addWidget(line)
-
         # =========== 指令发送区域 ===========
         self.__init_control_panel(main_layout)
-        
-        # 添加菜单栏
-        self.create_menu()
-        
+
         # 设置样式
         self.setStyleSheet(get_enhanced_styles())
 
     def __init_boards(self, main):
         """初始化板卡列表部分."""
-            # ========== 区域 A ==========
         a_container = QFrame()
         a_container.setFrameStyle(QFrame.Box | QFrame.Raised)
         a_layout = QHBoxLayout()
-        
-        # 创建4个部分，使用自定义部件
-        self.sections = []
-        for i in range(4):
-            section = SectionWidget(f"部分 {chr(97+i)}", self.on_section_button_clicked)
+
+        for name in DeviceEnums:
+            section = SectionWidget(name, self.__connect_device)
             a_layout.addWidget(section)
             self.sections.append(section)
-        
+
         a_container.setLayout(a_layout)
         main.addWidget(a_container, 3)
+        logger.info("Create 4 device sections in area A.")
 
     def __init_control_panel(self, main):
-                # ========== 区域 B ==========
         b_container = QFrame()
         b_container.setFrameStyle(QFrame.Box | QFrame.Raised)
         b_layout = QVBoxLayout()
-        
+
         # 第一行：输入框
         self.b_input = QLineEdit()
-        self.b_input.setPlaceholderText("请输入文本...")
+        self.b_input.setPlaceholderText("请输入电压值(0.00 ~ 20.00)")
         self.b_input.setMinimumHeight(40)
         b_layout.addWidget(self.b_input)
-        
+
         # 使用自定义按钮面板
-        self.button_panel = ButtonPanel(self.on_button_clicked)
+        self.button_panel = ButtonPanel(
+            self.__on_send_cmd,
+            list(DeviceEnums),
+        )
         b_layout.addWidget(self.button_panel)
-        
+
         b_container.setLayout(b_layout)
         main.addWidget(b_container, 2)
+        logger.info("Create control panel in area B.")
 
-    def create_menu(self):
-        """创建菜单栏"""
-        menubar = self.menuBar()
-        
-        # 文件菜单
-        file_menu = menubar.addMenu('文件')
-        
-        new_action = QAction('新建', self)
-        open_action = QAction('打开', self)
-        save_action = QAction('保存', self)
-        exit_action = QAction('退出', self)
-        exit_action.triggered.connect(self.close)
-        
-        file_menu.addAction(new_action)
-        file_menu.addAction(open_action)
-        file_menu.addAction(save_action)
-        file_menu.addSeparator()
-        file_menu.addAction(exit_action)
-        
-        # 帮助菜单
-        help_menu = menubar.addMenu('帮助')
-        about_action = QAction('关于', self)
-        help_menu.addAction(about_action)
-    
-    def on_section_button_clicked(self, section_name):
-        """A区域按钮点击事件"""
-        QMessageBox.information(self, "按钮点击", 
-                              f"点击了 {section_name} 的按钮")
-    
-    def on_button_clicked(self, button_index, row):
-        """B区域按钮点击事件"""
-        if row == "row2":
-            QMessageBox.information(self, "按钮点击", 
-                                  f"点击了第二行按钮 {button_index + 1}")
+    def __connect_device(self, ip, port, name):
+        """连接事件"""
+        self.controller.add_device(ip, port, name)
+        device = self.controller.get_device(name)
+        if device is None:
+            raise ValueError(f"{name} is not connected")
+        device.connect()
+
+    def __on_send_cmd(self, cmd, name=None):
+        """指令事件"""
+        logger.info(f"Send {cmd} for device: {name}")
+        if cmd in [
+                Commands.SetA,
+                Commands.SetB,
+                Commands.SetC,
+                Commands.SetD,
+        ]:
+            self.__send_single_device_task({
+                "cmd": cmd,
+                "name": name,
+                "data": "test",
+            })
+        elif cmd == Commands.SetAll:
+            self.__handle_set_all_async()
+        elif cmd == Commands.SpeedTest:
+            pass
         else:
-            QMessageBox.information(self, "按钮点击", 
-                                  f"点击了第三行按钮 {button_index + 1}")
+            raise ValueError(f"Unknown command: {cmd}")
+
+    def __handle_set_all_async(self):
+        """使用BatchWorker实现批量操作"""
+        # 准备任务数据
+        tasks = []
+        commands = list(Commands)
+        for index, name in enumerate(DeviceEnums):
+            tasks.append({
+                'cmd': commands[index],
+                'name': name,
+                'data': "Test"
+            })
+
+        # 创建批量工作器
+        worker = BatchWorker(
+            self.__send_single_device_task,
+            tasks,
+            self.__on_batch_complete,
+        )
+
+        self.thread_pool.start(worker)
+
+    def __send_single_device_task(self, task_data):
+        """单个设备发送任务"""
+        cmd = task_data['cmd']
+        name = task_data['name']
+        data = task_data['data']
+        logger.info(f"{task_data}")
+        device = self.controller.get_device(name)
+        if device is None:
+            return (name, False, f"{name} is not connected")
+        device.send(data)
+        return (name, True, None)
+
+    def __on_batch_complete(self, results):
+        """批量完成回调"""
+        success_count = sum(1 for _, success, _ in results if success)
+        total = len(results)
+
+        logger.info(
+            f"Batch operation completed: {success_count}/{total} successful")
+
+        # 显示结果
+        if success_count < total:
+            failed_names = [
+                name for name, success, _ in results if not success
+            ]
+            QMessageBox.warning(
+                self, "Batch Operation", f"Success: {success_count}/{total}\n"
+                f"Failed devices: {', '.join(failed_names)}")
+        else:
+            QMessageBox.information(
+                self, "Success",
+                f"All {total} devices completed successfully!")

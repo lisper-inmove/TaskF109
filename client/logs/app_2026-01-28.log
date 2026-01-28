@@ -1,0 +1,145 @@
+2026-01-28 22:02:30 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:02:30 | INFO | enhanced_window:__init_control_panel:76 - Create control panel in area B.
+2026-01-28 22:03:30 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:03:30 | INFO | enhanced_window:__init_control_panel:76 - Create control panel in area B.
+2026-01-28 22:06:24 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:06:24 | INFO | enhanced_window:__init_control_panel:76 - Create control panel in area B.
+2026-01-28 22:06:52 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:06:52 | INFO | enhanced_window:__init_control_panel:76 - Create control panel in area B.
+2026-01-28 22:08:32 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:08:32 | INFO | enhanced_window:__init_control_panel:76 - Create control panel in area B.
+2026-01-28 22:14:59 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:14:59 | INFO | enhanced_window:__init_control_panel:76 - Create control panel in area B.
+2026-01-28 22:24:12 | INFO | enhanced_window:__init_boards:59 - Create 4 device sections in area A.
+2026-01-28 22:24:12 | INFO | enhanced_window:__init_control_panel:78 - Create control panel in area B.
+2026-01-28 22:24:17 | INFO | device:connect:21 - Device Device A connected to 127.0.0.1:8888
+2026-01-28 22:39:26 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:39:26 | INFO | enhanced_window:__init_control_panel:76 - Create control panel in area B.
+2026-01-28 22:43:05 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:43:05 | INFO | enhanced_window:__init_control_panel:79 - Create control panel in area B.
+2026-01-28 22:43:07 | INFO | enhanced_window:on_button_clicked:91 - Button clicked for device: Device A
+2026-01-28 22:43:11 | INFO | enhanced_window:on_button_clicked:91 - Button clicked for device: Device B
+2026-01-28 22:43:12 | INFO | enhanced_window:on_button_clicked:91 - Button clicked for device: Device C
+2026-01-28 22:43:13 | INFO | enhanced_window:on_button_clicked:91 - Button clicked for device: Device D
+2026-01-28 22:49:43 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:49:43 | INFO | enhanced_window:__init_control_panel:79 - Create control panel in area B.
+2026-01-28 22:50:42 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:50:42 | INFO | enhanced_window:__init_control_panel:79 - Create control panel in area B.
+2026-01-28 22:50:43 | INFO | enhanced_window:on_button_clicked:91 - Button clicked for device: Set A
+2026-01-28 22:50:47 | INFO | enhanced_window:on_button_clicked:91 - Button clicked for device: Set B
+2026-01-28 22:50:48 | INFO | enhanced_window:on_button_clicked:91 - Button clicked for device: Set C
+2026-01-28 22:50:48 | INFO | enhanced_window:on_button_clicked:91 - Button clicked for device: Set D
+2026-01-28 22:50:49 | INFO | enhanced_window:on_button_clicked:91 - Button clicked for device: Set All
+2026-01-28 22:50:50 | INFO | enhanced_window:on_button_clicked:91 - Button clicked for device: Speed Test
+2026-01-28 22:53:25 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:53:25 | INFO | enhanced_window:__init_control_panel:79 - Create control panel in area B.
+2026-01-28 22:54:07 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:54:07 | INFO | enhanced_window:__init_control_panel:79 - Create control panel in area B.
+2026-01-28 22:55:57 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:55:57 | INFO | enhanced_window:__init_control_panel:79 - Create control panel in area B.
+2026-01-28 22:56:12 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:56:12 | INFO | enhanced_window:__init_control_panel:79 - Create control panel in area B.
+2026-01-28 22:56:13 | INFO | enhanced_window:__on_send_cmd:91 - Send Set B for device: Device B
+2026-01-28 22:56:15 | INFO | enhanced_window:__on_send_cmd:91 - Send Set C for device: Device C
+2026-01-28 22:56:15 | INFO | enhanced_window:__on_send_cmd:91 - Send Set D for device: Device D
+2026-01-28 22:56:16 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 22:57:11 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 22:57:11 | INFO | enhanced_window:__init_control_panel:79 - Create control panel in area B.
+2026-01-28 22:57:13 | INFO | enhanced_window:__on_send_cmd:91 - Send Speed Test for device: None
+2026-01-28 22:57:14 | INFO | enhanced_window:__on_send_cmd:91 - Send Set All for device: None
+2026-01-28 23:00:33 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 23:00:33 | INFO | enhanced_window:__init_control_panel:79 - Create control panel in area B.
+2026-01-28 23:00:41 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 23:00:41 | INFO | enhanced_window:__init_control_panel:79 - Create control panel in area B.
+2026-01-28 23:00:48 | INFO | device:connect:23 - Device Device A connected to 127.0.0.1:8888
+2026-01-28 23:00:50 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:00:50 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:00 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:00 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:01 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:01 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:01 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:01 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:01 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:01 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:01 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:01 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:02 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:02 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:02 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:02 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:02 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:02 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:02 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:02 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:02 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:02 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:02 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:02 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:02 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:02 | INFO | device:send:29 - Send Data to server: {data}
+2026-01-28 23:01:40 | INFO | enhanced_window:__init_boards:57 - Create 4 device sections in area A.
+2026-01-28 23:01:40 | INFO | enhanced_window:__init_control_panel:79 - Create control panel in area B.
+2026-01-28 23:01:46 | INFO | device:connect:23 - Device Device A connected to 127.0.0.1:8888
+2026-01-28 23:01:48 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:48 | INFO | device:send:29 - Send Data to server: bytearray(b'\x01\x02\x03')
+2026-01-28 23:01:49 | INFO | enhanced_window:__on_send_cmd:91 - Send Set A for device: Device A
+2026-01-28 23:01:49 | INFO | device:send:29 - Send Data to server: bytearray(b'\x01\x02\x03')
+2026-01-28 23:09:21 | INFO | enhanced_window:__init_boards:58 - Create 4 device sections in area A.
+2026-01-28 23:09:21 | INFO | enhanced_window:__init_control_panel:80 - Create control panel in area B.
+2026-01-28 23:09:28 | INFO | device:connect:23 - Device Device A connected to 127.0.0.1:8888
+2026-01-28 23:09:29 | INFO | enhanced_window:__on_send_cmd:92 - Send Set A for device: Device A
+2026-01-28 23:09:59 | INFO | enhanced_window:__init_boards:59 - Create 4 device sections in area A.
+2026-01-28 23:09:59 | INFO | enhanced_window:__init_control_panel:81 - Create control panel in area B.
+2026-01-28 23:10:04 | INFO | device:connect:23 - Device Device A connected to 127.0.0.1:8888
+2026-01-28 23:10:06 | INFO | enhanced_window:__on_send_cmd:93 - Send Set A for device: Device A
+2026-01-28 23:10:06 | INFO | device:send:29 - Send Data to server: bytearray(b'\x01\x02\x03')
+2026-01-28 23:10:06 | INFO | enhanced_window:__on_command_complete:120 - Command Set A for Device A completed successfully
+2026-01-28 23:19:13 | INFO | enhanced_window:__init_boards:61 - Create 4 device sections in area A.
+2026-01-28 23:19:13 | INFO | enhanced_window:__init_control_panel:83 - Create control panel in area B.
+2026-01-28 23:19:17 | INFO | enhanced_window:__init_boards:61 - Create 4 device sections in area A.
+2026-01-28 23:19:17 | INFO | enhanced_window:__init_control_panel:83 - Create control panel in area B.
+2026-01-28 23:19:24 | INFO | enhanced_window:__on_send_cmd:95 - Send Set A for device: Device A
+2026-01-28 23:19:29 | INFO | enhanced_window:__on_send_cmd:95 - Send Set A for device: Device A
+2026-01-28 23:19:30 | INFO | enhanced_window:__on_send_cmd:95 - Send Set A for device: Device A
+2026-01-28 23:20:39 | INFO | enhanced_window:__init_boards:61 - Create 4 device sections in area A.
+2026-01-28 23:20:39 | INFO | enhanced_window:__init_control_panel:83 - Create control panel in area B.
+2026-01-28 23:20:45 | INFO | device:connect:23 - Device Device A connected to 127.0.0.1:8888
+2026-01-28 23:20:46 | INFO | enhanced_window:__on_send_cmd:95 - Send Set A for device: Device A
+2026-01-28 23:20:46 | INFO | enhanced_window:__send_single_device_task:140 - {'cmd': <Commands.SetA: 'Set A'>, 'name': <DeviceEnums.DeviceA: 'Device A'>, 'data': 'test'}
+2026-01-28 23:20:46 | INFO | device:send:29 - Send Data to server: bytearray(b'\x01\x02\x03')
+2026-01-28 23:20:54 | INFO | enhanced_window:__on_send_cmd:95 - Send Set A for device: Device A
+2026-01-28 23:20:54 | INFO | enhanced_window:__send_single_device_task:140 - {'cmd': <Commands.SetA: 'Set A'>, 'name': <DeviceEnums.DeviceA: 'Device A'>, 'data': 'test'}
+2026-01-28 23:20:54 | INFO | device:send:29 - Send Data to server: bytearray(b'\x01\x02\x03')
+2026-01-28 23:20:55 | INFO | enhanced_window:__on_send_cmd:95 - Send Set A for device: Device A
+2026-01-28 23:20:55 | INFO | enhanced_window:__send_single_device_task:140 - {'cmd': <Commands.SetA: 'Set A'>, 'name': <DeviceEnums.DeviceA: 'Device A'>, 'data': 'test'}
+2026-01-28 23:20:55 | INFO | device:send:29 - Send Data to server: bytearray(b'\x01\x02\x03')
+2026-01-28 23:20:56 | INFO | enhanced_window:__on_send_cmd:95 - Send Set A for device: Device A
+2026-01-28 23:20:56 | INFO | enhanced_window:__send_single_device_task:140 - {'cmd': <Commands.SetA: 'Set A'>, 'name': <DeviceEnums.DeviceA: 'Device A'>, 'data': 'test'}
+2026-01-28 23:20:56 | INFO | device:send:29 - Send Data to server: bytearray(b'\x01\x02\x03')
+2026-01-28 23:21:04 | INFO | device:connect:23 - Device Device B connected to 127.0.0.1:8888
+2026-01-28 23:21:04 | INFO | device:connect:23 - Device Device C connected to 127.0.0.1:8888
+2026-01-28 23:21:05 | INFO | device:connect:23 - Device Device D connected to 127.0.0.1:8888
+2026-01-28 23:21:06 | INFO | enhanced_window:__on_send_cmd:95 - Send Set All for device: None
+2026-01-28 23:21:29 | INFO | enhanced_window:__init_boards:61 - Create 4 device sections in area A.
+2026-01-28 23:21:29 | INFO | enhanced_window:__init_control_panel:83 - Create control panel in area B.
+2026-01-28 23:21:45 | INFO | device:connect:23 - Device Device A connected to 127.0.0.1:8888
+2026-01-28 23:21:45 | INFO | device:connect:23 - Device Device B connected to 127.0.0.1:8888
+2026-01-28 23:21:45 | INFO | device:connect:23 - Device Device C connected to 127.0.0.1:8888
+2026-01-28 23:21:46 | INFO | device:connect:23 - Device Device D connected to 127.0.0.1:8888
+2026-01-28 23:21:47 | INFO | enhanced_window:__on_send_cmd:95 - Send Set All for device: None
+2026-01-28 23:22:00 | INFO | enhanced_window:__init_boards:61 - Create 4 device sections in area A.
+2026-01-28 23:22:00 | INFO | enhanced_window:__init_control_panel:83 - Create control panel in area B.
+2026-01-28 23:22:15 | INFO | device:connect:23 - Device Device A connected to 127.0.0.1:8888
+2026-01-28 23:22:15 | INFO | device:connect:23 - Device Device B connected to 127.0.0.1:8888
+2026-01-28 23:22:15 | INFO | device:connect:23 - Device Device C connected to 127.0.0.1:8888
+2026-01-28 23:22:16 | INFO | device:connect:23 - Device Device D connected to 127.0.0.1:8888
+2026-01-28 23:22:17 | INFO | enhanced_window:__on_send_cmd:95 - Send Set All for device: None
+2026-01-28 23:22:17 | INFO | enhanced_window:__send_single_device_task:140 - {'cmd': <Commands.SetA: 'Set A'>, 'name': <DeviceEnums.DeviceA: 'Device A'>, 'data': 'Test'}
+2026-01-28 23:22:17 | INFO | device:send:29 - Send Data to server: bytearray(b'\x01\x02\x03')
+2026-01-28 23:22:17 | INFO | enhanced_window:__send_single_device_task:140 - {'cmd': <Commands.SetB: 'Set B'>, 'name': <DeviceEnums.DeviceB: 'Device B'>, 'data': 'Test'}
+2026-01-28 23:22:17 | INFO | device:send:29 - Send Data to server: bytearray(b'\x01\x02\x03')
+2026-01-28 23:22:17 | INFO | enhanced_window:__send_single_device_task:140 - {'cmd': <Commands.SetC: 'Set C'>, 'name': <DeviceEnums.DeviceC: 'Device C'>, 'data': 'Test'}
+2026-01-28 23:22:17 | INFO | device:send:29 - Send Data to server: bytearray(b'\x01\x02\x03')
+2026-01-28 23:22:17 | INFO | enhanced_window:__send_single_device_task:140 - {'cmd': <Commands.SetD: 'Set D'>, 'name': <DeviceEnums.DeviceD: 'Device D'>, 'data': 'Test'}
+2026-01-28 23:22:17 | INFO | device:send:29 - Send Data to server: bytearray(b'\x01\x02\x03')
