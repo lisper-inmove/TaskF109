@@ -8,8 +8,8 @@ from PyQt5.QtWidgets import QApplication
 from enhanced_window import EnhancedWindow
 
 
+# 移除默认配置
 def config_logger():
-    # 移除默认配置
     logger.remove()
 
     # 1. 配置终端输出（控制台）

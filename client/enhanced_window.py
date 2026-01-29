@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import (QAction, QFrame, QHBoxLayout, QLineEdit,
 
 from common import Commands, DeviceEnums
 from controller import Controller
+from timing import simple_timer
 from utils.styles import get_enhanced_styles
 from widgets.button_panel import ButtonPanel
 from widgets.section_widget import SectionWidget
@@ -20,7 +21,7 @@ class EnhancedWindow(QMainWindow):
         # 创建4个部分，使用自定义部件
         self.sections = []
         self.controller = Controller()
-        self.thread_pool = QThreadPool()  # 创建线程池
+        self.thread_pool = QThreadPool()
         self.future_watchers = []
         self.thread_pool.setMaxThreadCount(4)
         self.initUI()
@@ -90,6 +91,7 @@ class EnhancedWindow(QMainWindow):
             raise ValueError(f"{name} is not connected")
         device.connect()
 
+    @simple_timer
     def __on_send_cmd(self, cmd, name=None):
         """指令事件"""
         logger.info(f"Send {cmd} for device: {name}")
@@ -137,9 +139,10 @@ class EnhancedWindow(QMainWindow):
         cmd = task_data['cmd']
         name = task_data['name']
         data = task_data['data']
-        logger.info(f"{task_data}")
+        logger.info(f"Send {cmd} to {name} with data: {data}")
         device = self.controller.get_device(name)
         if device is None:
+            logger.info(f"Device not connected: {name}")
             return (name, False, f"{name} is not connected")
         device.send(data)
         return (name, True, None)

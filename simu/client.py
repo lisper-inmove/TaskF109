@@ -63,6 +63,7 @@ def test_tcp_server(host="127.0.0.1", port=8888):
 
 if __name__ == "__main__":
     # 测试多个端口
-    for port in [8888, 8889, 8890]:
-        print(f"\n测试端口 {port}...")
-        test_tcp_server("127.0.0.1", port)
+    # for port in [8888, 8889, 8890]:
+    #     print(f"\n测试端口 {port}...")
+    #     test_tcp_server("192.168.200.27", port)
+    test_tcp_server("192.168.200.27", 8888)
