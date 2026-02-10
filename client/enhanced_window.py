@@ -23,15 +23,17 @@ class EnhancedWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         # 创建4个部分，使用自定义部件
-        self.sections = []
-        self.controller = Controller()
-        self.thread_pool = QThreadPool()
-        self.heartbeat_thread = HeartbeatThread()
-        self.heartbeat_thread.start()
-        self.thread_pool.setMaxThreadCount(8)
-        self.initUI()
+        self.__sections = []
+        self.__controller = Controller()
+        self.__thread_pool = QThreadPool()
+        self.__heartbeat_thread = HeartbeatThread()
+        self.__heartbeat_thread.start()
+        self.__thread_pool.setMaxThreadCount(8)
+        self.__log_widget = LogWidget()
+        self.__button_panel = ButtonPanel(self.__on_send_cmd)
+        self.__init()
 
-    def initUI(self):
+    def __init(self):
         self.setWindowTitle('上位机程序')
         self.setGeometry(100, 100, 1600, 700)
 
@@ -53,9 +55,8 @@ class EnhancedWindow(QMainWindow):
 
         main_layout.addWidget(left_widget, 3)
 
-        self.log_widget = LogWidget()
-        main_layout.addWidget(self.log_widget, 1)
-        LoggerFactory().add_qt_log_sink(self.log_widget)
+        main_layout.addWidget(self.__log_widget, 1)
+        LoggerFactory().add_qt_log_sink(self.__log_widget)
 
         # 设置样式
         self.setStyleSheet(get_enhanced_styles())
@@ -73,7 +74,7 @@ class EnhancedWindow(QMainWindow):
                 self.__disconnect,
             )
             a_layout.addWidget(section)
-            self.sections.append(section)
+            self.__sections.append(section)
 
         a_container.setLayout(a_layout)
         main.addWidget(a_container, 3)
@@ -94,10 +95,10 @@ class EnhancedWindow(QMainWindow):
         b_layout = QVBoxLayout()
 
         # ---------- 按钮面板 ----------
-        self.button_panel = ButtonPanel(self.__on_send_cmd)
-        self.button_panel.add_voltage_area()
-        self.button_panel.add_speed_test_area()
-        b_layout.addWidget(self.button_panel)
+        self.__button_panel = ButtonPanel(self.__on_send_cmd)
+        self.__button_panel.add_voltage_area()
+        self.__button_panel.add_speed_test_area()
+        b_layout.addWidget(self.__button_panel)
 
         b_layout.addStretch(1)
 
@@ -108,23 +109,23 @@ class EnhancedWindow(QMainWindow):
 
     def __disconnect(self, name):
         """断开连接事件"""
-        device = self.controller.get_device(name)
+        device = self.__controller.get_device(name)
         if device:
-            self.heartbeat_thread.remove_device(device)
+            self.__heartbeat_thread.remove_device(device)
             device.disconnect()
-            self.controller.remove_device(name)
+            self.__controller.remove_device(name)
             logger.info(f"Device disconnected: {name}")
         else:
             logger.info(f"Device not connected: {name}")
 
     def __connect_device(self, ip, port, name):
         """连接事件"""
-        self.controller.add_device(ip, port, name)
-        device = self.controller.get_device(name)
+        self.__controller.add_device(ip, port, name)
+        device = self.__controller.get_device(name)
         if device is None:
             raise ValueError(f"{name} is not connected")
         device.connect()
-        self.heartbeat_thread.add_device(device)
+        self.__heartbeat_thread.add_device(device)
         return device.connected
 
     @simple_timer
@@ -144,7 +145,7 @@ class EnhancedWindow(QMainWindow):
 
     def __data(self):
         try:
-            voltage = self.button_panel.voltage
+            voltage = self.__button_panel.voltage
         except Exception as ex:
             logger.error(f"Invalid voltage input: {ex}")
             raise ex
@@ -158,14 +159,14 @@ class EnhancedWindow(QMainWindow):
 
     def __handle_speed_test_async(self):
         tasks = []
-        df = self.button_panel.csv_data
+        df = self.__button_panel.csv_data
         if df is None:
             raise ValueError("No CSV data available for speed test.")
         names = list(DeviceEnums)
         for name in names:
             tasks.append(self.__create_speed_test_task(name, list(df[name])))
         worker = BatchWorker(self.__send_speed_test_task, tasks)
-        self.thread_pool.start(worker)
+        self.__thread_pool.start(worker)
 
     def __handle_set_all_async(self):
         """Set All"""
@@ -174,32 +175,30 @@ class EnhancedWindow(QMainWindow):
         for name in names:
             tasks.append(self.__create_voltage_set_task(name))
         worker = BatchWorker(self.__send_single_device_task, tasks)
-        self.thread_pool.start(worker)
+        self.__thread_pool.start(worker)
 
     @simple_timer
     def __send_single_device_task(self, task: Task):
         """单个设备发送任务"""
         logger.info(
             f"Send {task.cmd} to {task.device_name} with data: {task.data}")
-        device = self.controller.get_device(task.device_name)
+        device = self.__controller.get_device(task.device_name)
         if device is None:
-            self.button_panel.set_busy(False)
+            self.__button_panel.set_busy(False)
             logger.info(f"Device not connected: {task.device_name}")
-            return (task.device_name, False,
-                    f"{task.device_name} is not connected")
+            return False
         device.send_set_voltage(task.data)
-        self.button_panel.set_busy(False)
-        return (task.device_name, True, None)
+        self.__button_panel.set_busy(False)
+        return True
 
     @simple_timer
     def __send_speed_test_task(self, task: Task):
         """Speed Test"""
-        device = self.controller.get_device(task.device_name)
+        device = self.__controller.get_device(task.device_name)
         if device is None:
-            self.button_panel.set_busy(False)
+            self.__button_panel.set_busy(False)
             logger.info(f"Device not connected: {task.device_name}")
-            return (task.device_name, False,
-                    f"{task.device_name} is not connected")
+            return False
         device.send_multi_voltage(task.data)
-        self.button_panel.set_busy(False)
-        return (task.device_name, True, None)
+        self.__button_panel.set_busy(False)
+        return True
