@@ -2,7 +2,7 @@ import functools
 import time
 from typing import Any, Callable
 
-from loguru import logger
+from log_config import main_logger as logger
 
 
 # 额外：一个更简洁的版本，适合生产环境

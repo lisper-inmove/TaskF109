@@ -1,55 +1,39 @@
 # main.py
+import os
 import sys
+import traceback
 from datetime import datetime
 
-from loguru import logger
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QMessageBox
 
 from enhanced_window import EnhancedWindow
+from log_config import main_logger as logger
 
 
-# 移除默认配置
-def config_logger():
-    logger.remove()
+def config():
+    if os.environ.get('VOLTAGE_MIN') is None:
+        os.environ['VOLTAGE_MIN'] = '10'
+    if os.environ.get("VOLTAGE_MAX") is None:
+        os.environ['VOLTAGE_MAX'] = '20000'
 
-    # 1. 配置终端输出（控制台）
-    logger.add(
-        sys.stderr,
-        format=
-        "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-        level="INFO",
-        colorize=True,
-        backtrace=True,
-        diagnose=True)
 
-    # 2. 配置文件输出（带轮转）
-    logger.add(
-        "logs/app_{time:YYYY-MM-DD}.log",  # 按日期分割文件
-        rotation="200 MB",  # 单个文件最大200MB
-        retention="30 days",  # 保留30天
-        compression="zip",  # 可选：压缩旧日志
-        format=
-        "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
-        level="DEBUG",  # 文件日志级别
-        encoding="utf-8",
-        enqueue=True,  # 多进程安全
-        backtrace=True,
-        diagnose=True)
+def exception_hook(exc_type, exc_value, exc_traceback):
+    """
+    全局异常捕获：不让程序退出，而是弹窗提示
+    """
+    if issubclass(exc_type, KeyboardInterrupt):
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        return
 
-    # 3. 可选：特定错误日志单独记录
-    logger.add(
-        "logs/error_{time:YYYY-MM-DD}.log",
-        rotation="200 MB",
-        retention="30 days",
-        format=
-        "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
-        level="ERROR",
-        encoding="utf-8",
-        enqueue=True)
+    error_msg = "".join(
+        traceback.format_exception(exc_type, exc_value, exc_traceback))
+    logger.info(error_msg)
+    QMessageBox.critical(None, "程序异常", f"发生未处理异常：\n\n{exc_value}")
 
 
 def main():
-    config_logger()
+    config()
+    sys.excepthook = exception_hook
     app = QApplication(sys.argv)
     window = EnhancedWindow()
     window.show()

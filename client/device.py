@@ -3,8 +3,8 @@ import socket
 import struct
 import time
 
-from loguru import logger
-
+from log_config import main_logger as logger
+from protocol import Protocol
 from timing import simple_timer
 
 
@@ -28,15 +28,28 @@ class Device:
         logger.info(f"Device {self.name} connected to {self.ip}:{self.port}")
         self.connected = True
 
-    @simple_timer
-    def send(self, msg):
-        # data = bytearray([0x01, 0x02, 0x03])
-        # ret = self.sock.sendall(data)
-        data = msg.encode('utf-8')
-        header = struct.pack("!I", len(data))
-        packet = header + data
+    def disconnect(self):
+        self.sock.shutdown(socket.SHUT_RDWR)
+        self.sock.close()
+        self.connected = False
+
+    def send_heartbeat(self):
+        msg = Protocol.heartbeat()
+        self.send(msg)
+
+    def send_set_voltage(self, voltage):
+        msg = Protocol.set_voltage(voltage)
+        logger.info(f"Send set voltage: {msg}")
+        self.send(msg)
+
+    def send_multi_voltage(self, voltages):
+        msg = Protocol.set_multi_voltage(voltages)
+        logger.info(f"Send set multi voltage: {msg}")
+        self.send(msg)
+
+    def send(self, packet):
         self.sock.sendall(packet)
+        self.recv()
 
     def recv(self):
-        data = self.sock.recv(1024)
-        logger.info(f"Received data: {data}")
+        self.sock.recv(1024)

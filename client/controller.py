@@ -15,3 +15,7 @@ class Controller:
 
     def get_device(self, name):
         return self.devices.get(name)
+
+    def remove_device(self, name):
+        if self.devices.get(name):
+            del self.devices[name]
