@@ -1,3 +1,6 @@
+import time
+from typing import Dict
+
 from PyQt5.QtCore import Qt, QThreadPool, pyqtSlot
 from PyQt5.QtWidgets import (QAction, QFrame, QHBoxLayout, QLabel, QLineEdit,
                              QMainWindow, QMessageBox, QSizePolicy, QSpinBox,
@@ -23,12 +26,12 @@ class EnhancedWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         # 创建4个部分，使用自定义部件
-        self.__sections = []
+        self.__sections: Dict[str, SectionWidget] = {}
         self.__controller = Controller()
         self.__thread_pool = QThreadPool()
         self.__heartbeat_thread = HeartbeatThread()
         self.__heartbeat_thread.start()
-        self.__thread_pool.setMaxThreadCount(8)
+        self.__thread_pool.setMaxThreadCount(10)
         self.__log_widget = LogWidget()
         self.__button_panel = ButtonPanel(self.__on_send_cmd)
         self.__init()
@@ -60,6 +63,21 @@ class EnhancedWindow(QMainWindow):
 
         # 设置样式
         self.setStyleSheet(get_enhanced_styles())
+        self.__thread_pool.start(self.__check_device)
+
+    def __check_device(self):
+        while True:
+            devices = list(self.__controller.devices.values())
+            for device in devices:
+                if device.connected:
+                    continue
+                self.__heartbeat_thread.remove_device(device)
+                self.__controller.remove_device(device.name)
+                section = self.__sections.get(device.name)
+                section.update_title(False)
+                logger.info(
+                    f"Device removed due to disconnection: {device.name}")
+            time.sleep(5)
 
     def __init_boards(self, main):
         """初始化板卡列表部分."""
@@ -74,7 +92,7 @@ class EnhancedWindow(QMainWindow):
                 self.__disconnect,
             )
             a_layout.addWidget(section)
-            self.__sections.append(section)
+            self.__sections.update({name: section})
 
         a_container.setLayout(a_layout)
         main.addWidget(a_container, 3)

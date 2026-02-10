@@ -15,17 +15,25 @@ class HeartbeatThread(QThread):
         super().__init__()
         self.interval = interval
         self.running = True
-        self.devices: Dict[Device] = {}
+        self.devices: Dict[str, Device] = {}
 
     def run(self):
         """线程主函数"""
         while self.running:
-            try:
-                for _, device in self.devices.items():
+            for _, device in self.devices.items():
+                try:
                     logger.info(f"Send heartbeat to device: {device.name}")
                     device.send_heartbeat()
-            except Exception as e:
-                logger.info("Send heartbeat failed: {}", e)
+                    device.failed_reset()
+                except Exception as e:
+                    logger.info(f"Send heartbeat {device.name} failed: {e}")
+                    device.failed_incr()
+                finally:
+                    if device.failed >= 3:
+                        logger.info(
+                            f"Device {device.name} failed {device.failed} times, disconnecting"
+                        )
+                        device.disconnect()
             time.sleep(self.interval)
 
     def stop(self):
@@ -33,7 +41,7 @@ class HeartbeatThread(QThread):
         self.running = False
         self.wait()
 
-    def add_device(self, device):
+    def add_device(self, device: Device):
         """添加设备到心跳列表"""
         self.devices.update({device.name: device})
 

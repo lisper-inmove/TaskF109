@@ -1,10 +1,12 @@
+from typing import Dict
+
 from device import Device
 
 
 class Controller:
 
     def __init__(self):
-        self.devices = {}
+        self.devices: Dict[str, Device] = {}
 
     def add_device(self, ip, port, name):
         if self.devices.get(name):

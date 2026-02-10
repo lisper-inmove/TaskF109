@@ -11,27 +11,44 @@ from timing import simple_timer
 class Device:
 
     def __init__(self, ip, port, name):
-        self.ip = ip
-        self.port = port
-        self.name = name
-        self.connected = False
-        self.sock = None
+        self.__ip = ip
+        self.__port = port
+        self.__name = name
+        self.__connected = False
+        self.__sock = None
+        self.__failed = 0
+
+    @property
+    def failed(self):
+        return self.__failed
+
+    @property
+    def connected(self):
+        return self.__connected
+
+    @property
+    def name(self):
+        return self.__name
 
     def connect(self):
-        if self.connected:
+        if self.__connected:
             return
-        self.sock = socket.socket(
+        self.__sock = socket.socket(
             socket.AF_INET,
             socket.SOCK_STREAM,
         )
-        self.sock.connect((self.ip, self.port))
-        logger.info(f"Device {self.name} connected to {self.ip}:{self.port}")
-        self.connected = True
+        self.__sock.connect((self.__ip, self.__port))
+        logger.info(
+            f"Device {self.__name} connected to {self.__ip}:{self.__port}")
+        self.__connected = True
 
     def disconnect(self):
-        self.sock.shutdown(socket.SHUT_RDWR)
-        self.sock.close()
-        self.connected = False
+        try:
+            self.__connected = False
+            self.__sock.shutdown(socket.SHUT_RDWR)
+            self.__sock.close()
+        except Exception as ex:
+            logger.warning(f"Disconnect error: {ex}")
 
     def send_heartbeat(self):
         msg = Protocol.heartbeat()
@@ -48,8 +65,14 @@ class Device:
         self.send(msg)
 
     def send(self, packet):
-        self.sock.sendall(packet)
+        self.__sock.sendall(packet)
         self.recv()
 
     def recv(self):
-        self.sock.recv(1024)
+        self.__sock.recv(1024)
+
+    def failed_incr(self):
+        self.__failed += 1
+
+    def failed_reset(self):
+        self.__failed = 0
