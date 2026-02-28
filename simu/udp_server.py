@@ -225,4 +225,10 @@ class UDPServer:
 
     def get_server_stats(self) -> Dict:
         """获取服务器统计信息"""
-        pass
+        stats = self.stats.copy()
+        stats["uptime"] = time.time() - stats["start_time"] if self.running else 0
+        stats["running"] = self.running
+        stats["protocol"] = "UDP"
+        stats["host"] = self.host
+        stats["port"] = self.port
+        return stats
