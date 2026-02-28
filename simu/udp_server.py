@@ -59,7 +59,35 @@ class UDPServer:
 
     def start(self):
         """启动服务器"""
-        pass
+        if self.running:
+            self.logger.warning("服务器已在运行中")
+            return
+
+        try:
+            # 创建 UDP socket
+            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+            # 绑定地址和端口
+            self.server_socket.bind((self.host, self.port))
+
+            # 设置超时避免阻塞
+            self.server_socket.settimeout(1.0)
+
+            # 设置服务器为运行状态
+            self.running = True
+            self.stats["start_time"] = time.time()
+
+            # 启动服务器线程
+            self.server_thread = threading.Thread(target=self._run_server, daemon=True)
+            self.server_thread.start()
+
+            self.logger.info(f"UDP 服务器已启动，监听 {self.host}:{self.port}")
+
+        except Exception as e:
+            self.logger.error(f"启动服务器失败: {e}")
+            self.running = False
+            raise
 
     def stop(self):
         """停止服务器"""
