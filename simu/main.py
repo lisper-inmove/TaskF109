@@ -130,12 +130,19 @@ def print_stats(manager: MultiPortServerManager, interval: int = 10):
 
             print(f"运行中的服务器: {stats['total_servers']}")
 
-            for port, server_stats in stats["servers"].items():
-                print(f"\n端口 {port}:")
+            for server_key, server_stats in stats["servers"].items():
+                protocol, port = server_key.split(":")
+                print(f"\n{protocol.upper()} 端口 {port}:")
                 print(f"  运行时间: {server_stats['uptime']:.1f} 秒")
-                print(f"  总连接数: {server_stats['total_connections']}")
-                print(f"  当前连接: {server_stats['current_connections']}")
-                print(f"  最大并发: {server_stats['max_concurrent_connections']}")
+
+                if protocol == "tcp":
+                    print(f"  总连接数: {server_stats['total_connections']}")
+                    print(f"  当前连接: {server_stats['current_connections']}")
+                    print(f"  最大并发: {server_stats['max_concurrent_connections']}")
+                elif protocol == "udp":
+                    print(f"  总数据包: {server_stats['total_packets']}")
+                    print(f"  接收字节: {server_stats['bytes_received']}")
+                    print(f"  发送字节: {server_stats['bytes_sent']}")
 
             print("=" * 60 + "\n")
 
@@ -188,17 +195,18 @@ def main():
     manager = MultiPortServerManager(config)
 
     # 启动服务器
-    print(f"启动TCP服务器...")
+    print(f"启动服务器...")
     print(f"监听地址: {args.host}")
     print(f"监听端口: {args.ports}")
+    print(f"协议类型: {args.protocol}")
     print(f"配置文件: {args.config or '使用默认配置'}")
     print(f"统计间隔: {args.stats_interval}秒")
     print(f"自定义处理器: {'是' if args.custom_handler else '否'}")
     print("-" * 50)
 
     try:
-        # 启动服务器
-        manager.start_servers(args.ports, args.host)
+        # 启动服务器（传递协议参数）
+        manager.start_servers(args.ports, args.host, args.protocol)
 
         # 设置自定义消息处理器
         if args.custom_handler:
