@@ -1,4 +1,3 @@
-# main.py
 import os
 import sys
 import traceback
@@ -15,6 +14,8 @@ def config():
         os.environ['VOLTAGE_MIN'] = '10'
     if os.environ.get("VOLTAGE_MAX") is None:
         os.environ['VOLTAGE_MAX'] = '20000'
+    if os.environ.get("PROTOCOL_TYPE") is None:
+        os.environ["PROTOCOL_TYPE"] = "UDP"
 
 
 def exception_hook(exc_type, exc_value, exc_traceback):

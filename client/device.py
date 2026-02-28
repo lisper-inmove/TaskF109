@@ -1,11 +1,11 @@
-import json
+import os
 import socket
-import struct
-import time
 
 from log_config import main_logger as logger
 from protocol import Protocol
-from timing import simple_timer
+from tcp_transport import TCPTransport
+from transport_strategy import TransportStrategy
+from udp_transport import UDPTransport
 
 
 class Device:
@@ -14,9 +14,16 @@ class Device:
         self.__ip = ip
         self.__port = port
         self.__name = name
-        self.__connected = False
-        self.__sock = None
+        self.__protocol_type = os.environ.get("PROTOCOL_TYPE", "udp").lower()
         self.__failed = 0
+
+        # 根据协议类型创建传输策略
+        if self.__protocol_type == 'tcp':
+            self.__transport: TransportStrategy = TCPTransport(ip, port, name)
+        elif self.__protocol_type == 'udp':
+            self.__transport: TransportStrategy = UDPTransport(ip, port, name)
+        else:
+            raise ValueError(f"Unsupported protocol type: {protocol_type}")
 
     @property
     def failed(self):
@@ -24,31 +31,19 @@ class Device:
 
     @property
     def connected(self):
-        return self.__connected
+        return self.__transport.connected
 
     @property
     def name(self):
         return self.__name
 
     def connect(self):
-        if self.__connected:
-            return
-        self.__sock = socket.socket(
-            socket.AF_INET,
-            socket.SOCK_STREAM,
-        )
-        self.__sock.connect((self.__ip, self.__port))
-        logger.info(
-            f"Device {self.__name} connected to {self.__ip}:{self.__port}")
-        self.__connected = True
+        """委托给传输策略"""
+        self.__transport.connect()
 
     def disconnect(self):
-        try:
-            self.__connected = False
-            self.__sock.shutdown(socket.SHUT_RDWR)
-            self.__sock.close()
-        except Exception as ex:
-            logger.warning(f"Disconnect error: {ex}")
+        """委托给传输策略"""
+        self.__transport.disconnect()
 
     def send_heartbeat(self):
         msg = Protocol.heartbeat()
@@ -65,11 +60,20 @@ class Device:
         self.send(msg)
 
     def send(self, packet):
-        self.__sock.sendall(packet)
-        self.recv()
+        """发送数据包并接收响应"""
+        try:
+            self.__transport.send(packet)
+            return self.recv()
+        except socket.timeout:
+            logger.warning(f"[{self.__name}] Receive timeout after send")
+            raise
+        except Exception as ex:
+            logger.error(f"[{self.__name}] Send/recv error: {ex}")
+            raise
 
     def recv(self):
-        self.__sock.recv(1024)
+        """委托给传输策略"""
+        return self.__transport.recv()
 
     def failed_incr(self):
         self.__failed += 1

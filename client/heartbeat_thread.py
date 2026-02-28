@@ -20,7 +20,9 @@ class HeartbeatThread(QThread):
     def run(self):
         """线程主函数"""
         while self.running:
-            for _, device in self.devices.items():
+            # 创建快照以避免竞态条件
+            devices_snapshot = list(self.devices.values())
+            for device in devices_snapshot:
                 try:
                     logger.info(f"Send heartbeat to device: {device.name}")
                     device.send_heartbeat()

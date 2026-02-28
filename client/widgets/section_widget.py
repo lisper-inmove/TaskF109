@@ -1,5 +1,6 @@
 from log_config import main_logger as logger
-from PyQt5.QtWidgets import QGroupBox, QLineEdit, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import (QGroupBox, QLabel, QLineEdit, QPushButton,
+                             QVBoxLayout)
 
 
 class SectionWidget(QGroupBox):
@@ -50,6 +51,7 @@ class SectionWidget(QGroupBox):
         """连接"""
         ip = self.__input1.text()
         port = self.__input2.text()
+
         try:
             port = int(port)
         except ValueError as ex:
@@ -58,7 +60,7 @@ class SectionWidget(QGroupBox):
 
         if self.__conn_cb:
             ret = self.__conn_cb(ip, port, self.__base_title)
-            self.update_title(ret)
+            self.update_title(ret if ret else None)
 
     def __on_disconnect(self):
         """断连"""

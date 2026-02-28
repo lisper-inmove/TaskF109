@@ -2,7 +2,8 @@
 import socket
 import threading
 import time
-from typing import Dict, Optional, Callable, Any
+from typing import Any, Callable, Dict, Optional
+
 from config import Config
 from protocol import ByteStreamProtocol
 from utils.logger import setup_logger
@@ -11,7 +12,10 @@ from utils.logger import setup_logger
 class UDPServer:
     """UDP 服务器"""
 
-    def __init__(self, host: str = "0.0.0.0", port: int = 8888, config: Config = None):
+    def __init__(self,
+                 host: str = "0.0.0.0",
+                 port: int = 8888,
+                 config: Config = None):
         """
         初始化 UDP 服务器
 
@@ -32,8 +36,7 @@ class UDPServer:
         # 协议处理器
         self.protocol = ByteStreamProtocol(
             header_size=self.config.get("protocol.header_size", 4),
-            encoding=self.config.get("protocol.encoding", "utf-8")
-        )
+            encoding=self.config.get("protocol.encoding", "utf-8"))
 
         # 消息处理回调
         self.message_callback: Optional[Callable] = None
@@ -47,11 +50,10 @@ class UDPServer:
         }
 
         # 日志记录器
-        self.logger = setup_logger(
-            name=f"udp_server_{port}",
-            level=self.config.get("logging.level", "INFO"),
-            log_file=self.config.get("logging.file")
-        )
+        self.logger = setup_logger(name=f"udp_server_{port}",
+                                   level=self.config.get(
+                                       "logging.level", "INFO"),
+                                   log_file=self.config.get("logging.file"))
 
     def set_message_callback(self, callback: Callable[[Any, tuple], Any]):
         """设置消息处理回调函数"""
@@ -65,8 +67,10 @@ class UDPServer:
 
         try:
             # 创建 UDP socket
-            self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.server_socket = socket.socket(socket.AF_INET,
+                                               socket.SOCK_DGRAM)
+            self.server_socket.setsockopt(socket.SOL_SOCKET,
+                                          socket.SO_REUSEADDR, 1)
 
             # 绑定地址和端口
             self.server_socket.bind((self.host, self.port))
@@ -79,7 +83,8 @@ class UDPServer:
             self.stats["start_time"] = time.time()
 
             # 启动服务器线程
-            self.server_thread = threading.Thread(target=self._run_server, daemon=True)
+            self.server_thread = threading.Thread(target=self._run_server,
+                                                  daemon=True)
             self.server_thread.start()
 
             self.logger.info(f"UDP 服务器已启动，监听 {self.host}:{self.port}")
@@ -141,7 +146,8 @@ class UDPServer:
             if self.message_callback:
                 response = self.message_callback(message, client_address)
             else:
-                response = self._default_message_handler(message, client_address)
+                response = self._default_message_handler(
+                    message, client_address)
 
             # 发送响应
             self._send_response(response, client_address)
@@ -151,14 +157,13 @@ class UDPServer:
             # 尝试发送错误响应
             try:
                 error_response = self.protocol.create_response(
-                    success=False,
-                    message=f"数据处理错误: {e}"
-                )
+                    success=False, message=f"数据处理错误: {e}")
                 self._send_response(error_response, client_address)
             except:
                 pass
 
-    def _default_message_handler(self, message: Any, client_address: tuple) -> Dict:
+    def _default_message_handler(self, message: Any,
+                                 client_address: tuple) -> Dict:
         """
         默认消息处理器
 
@@ -171,16 +176,15 @@ class UDPServer:
         """
         self.logger.info(f"处理来自 {client_address} 的消息: {message}")
 
-        return self.protocol.create_response(
-            success=True,
-            message="消息处理成功",
-            data={
-                "original_message": message,
-                "server_timestamp": time.time(),
-                "server_port": self.port,
-                "protocol": "UDP"
-            }
-        )
+        return self.protocol.create_response(success=True,
+                                             message="消息处理成功",
+                                             data={
+                                                 "original_message": message,
+                                                 "server_timestamp":
+                                                 time.time(),
+                                                 "server_port": self.port,
+                                                 "protocol": "UDP"
+                                             })
 
     def _send_response(self, response: Any, client_address: tuple):
         """
@@ -226,7 +230,8 @@ class UDPServer:
     def get_server_stats(self) -> Dict:
         """获取服务器统计信息"""
         stats = self.stats.copy()
-        stats["uptime"] = time.time() - stats["start_time"] if self.running else 0
+        stats["uptime"] = time.time(
+        ) - stats["start_time"] if self.running else 0
         stats["running"] = self.running
         stats["protocol"] = "UDP"
         stats["host"] = self.host
