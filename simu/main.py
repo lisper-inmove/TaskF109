@@ -16,12 +16,19 @@ class MultiPortServerManager:
 
     def __init__(self, config: Config = None):
         self.config = config or Config()
-        self.servers: Dict[int, TCPServer] = {}
+        self.servers: Dict[str, Any] = {}  # key: "protocol:port"
         self.running = False
         self.logger = setup_logger("server_manager")
 
-    def start_servers(self, ports: List[int], host: str = "0.0.0.0"):
-        """启动多个端口的服务器"""
+    def start_servers(self, ports: List[int], host: str = "0.0.0.0", protocol: str = "tcp"):
+        """
+        启动多个端口的服务器
+
+        Args:
+            ports: 端口列表
+            host: 监听地址
+            protocol: 协议类型 (tcp/udp/both)
+        """
         if self.running:
             self.logger.warning("服务器管理器已在运行中")
             return
@@ -29,24 +36,43 @@ class MultiPortServerManager:
         self.running = True
 
         for port in ports:
-            try:
-                server = TCPServer(host=host, port=port, config=self.config)
-                server.start()
-                self.servers[port] = server
-                self.logger.info(f"已启动服务器: {host}:{port}")
-            except Exception as e:
-                self.logger.error(f"启动服务器 {host}:{port} 失败: {e}")
+            # 根据协议类型启动服务器
+            if protocol in ["tcp", "both"]:
+                self._start_tcp_server(host, port)
+
+            if protocol in ["udp", "both"]:
+                self._start_udp_server(host, port)
 
         self.logger.info(f"已启动 {len(self.servers)} 个服务器实例")
 
+    def _start_tcp_server(self, host: str, port: int):
+        """启动 TCP 服务器"""
+        try:
+            server = TCPServer(host=host, port=port, config=self.config)
+            server.start()
+            self.servers[f"tcp:{port}"] = server
+            self.logger.info(f"已启动 TCP 服务器: {host}:{port}")
+        except Exception as e:
+            self.logger.error(f"启动 TCP 服务器 {host}:{port} 失败: {e}")
+
+    def _start_udp_server(self, host: str, port: int):
+        """启动 UDP 服务器"""
+        try:
+            server = UDPServer(host=host, port=port, config=self.config)
+            server.start()
+            self.servers[f"udp:{port}"] = server
+            self.logger.info(f"已启动 UDP 服务器: {host}:{port}")
+        except Exception as e:
+            self.logger.error(f"启动 UDP 服务器 {host}:{port} 失败: {e}")
+
     def stop_servers(self):
         """停止所有服务器"""
-        for port, server in self.servers.items():
+        for server_key, server in self.servers.items():
             try:
                 server.stop()
-                self.logger.info(f"已停止服务器: {server.host}:{port}")
+                self.logger.info(f"已停止服务器: {server_key}")
             except Exception as e:
-                self.logger.error(f"停止服务器 {port} 失败: {e}")
+                self.logger.error(f"停止服务器 {server_key} 失败: {e}")
 
         self.servers.clear()
         self.running = False
@@ -60,8 +86,8 @@ class MultiPortServerManager:
             "servers": {}
         }
 
-        for port, server in self.servers.items():
-            stats["servers"][port] = server.get_server_stats()
+        for server_key, server in self.servers.items():
+            stats["servers"][server_key] = server.get_server_stats()
 
         return stats
 
