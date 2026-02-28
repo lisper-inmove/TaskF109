@@ -89,6 +89,36 @@ class UDPServer:
             self.running = False
             raise
 
+    def _run_server(self):
+        """运行服务器主循环"""
+        self.logger.info("UDP 服务器主循环已启动")
+
+        while self.running:
+            try:
+                # 接收数据包
+                data, client_address = self.server_socket.recvfrom(4096)
+
+                # 更新统计信息
+                self.stats["total_packets"] += 1
+                self.stats["bytes_received"] += len(data)
+
+                # 处理数据包
+                self._process_packet(data, client_address)
+
+            except socket.timeout:
+                # 超时继续循环
+                continue
+            except OSError as e:
+                if self.running:
+                    self.logger.error(f"接收数据包时出错: {e}")
+                break
+            except Exception as e:
+                self.logger.error(f"服务器循环异常: {e}")
+                if self.running:
+                    time.sleep(0.1)
+
+        self.logger.info("UDP 服务器主循环已退出")
+
     def stop(self):
         """停止服务器"""
         pass
