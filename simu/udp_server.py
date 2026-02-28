@@ -119,6 +119,89 @@ class UDPServer:
 
         self.logger.info("UDP 服务器主循环已退出")
 
+    def _process_packet(self, data: bytes, client_address: tuple):
+        """
+        处理接收到的数据包
+
+        Args:
+            data: 数据包内容
+            client_address: 客户端地址 (ip, port)
+        """
+        try:
+            # 解析数据包
+            result = self.protocol.unpack(data)
+
+            if result is None:
+                self.logger.warning(f"数据包格式错误，来自 {client_address}")
+                return
+
+            message, _ = result
+
+            # 调用消息处理回调
+            if self.message_callback:
+                response = self.message_callback(message, client_address)
+            else:
+                response = self._default_message_handler(message, client_address)
+
+            # 发送响应
+            self._send_response(response, client_address)
+
+        except Exception as e:
+            self.logger.error(f"处理数据包时出错: {e}")
+            # 尝试发送错误响应
+            try:
+                error_response = self.protocol.create_response(
+                    success=False,
+                    message=f"数据处理错误: {e}"
+                )
+                self._send_response(error_response, client_address)
+            except:
+                pass
+
+    def _default_message_handler(self, message: Any, client_address: tuple) -> Dict:
+        """
+        默认消息处理器
+
+        Args:
+            message: 接收到的消息
+            client_address: 客户端地址
+
+        Returns:
+            Dict: 响应数据
+        """
+        self.logger.info(f"处理来自 {client_address} 的消息: {message}")
+
+        return self.protocol.create_response(
+            success=True,
+            message="消息处理成功",
+            data={
+                "original_message": message,
+                "server_timestamp": time.time(),
+                "server_port": self.port,
+                "protocol": "UDP"
+            }
+        )
+
+    def _send_response(self, response: Any, client_address: tuple):
+        """
+        发送响应到客户端
+
+        Args:
+            response: 响应数据
+            client_address: 客户端地址
+        """
+        try:
+            packed_data = self.protocol.pack(response)
+            self.server_socket.sendto(packed_data, client_address)
+
+            # 更新统计信息
+            self.stats["bytes_sent"] += len(packed_data)
+
+            self.logger.debug(f"发送响应到 {client_address}")
+
+        except Exception as e:
+            self.logger.error(f"发送响应失败: {e}")
+
     def stop(self):
         """停止服务器"""
         pass
