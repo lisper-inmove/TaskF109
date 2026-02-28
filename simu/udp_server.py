@@ -204,7 +204,24 @@ class UDPServer:
 
     def stop(self):
         """停止服务器"""
-        pass
+        if not self.running:
+            return
+
+        self.logger.info("正在停止 UDP 服务器...")
+        self.running = False
+
+        # 关闭服务器套接字
+        if self.server_socket:
+            try:
+                self.server_socket.close()
+            except:
+                pass
+
+        # 等待服务器线程结束
+        if self.server_thread and self.server_thread.is_alive():
+            self.server_thread.join(timeout=5)
+
+        self.logger.info("UDP 服务器已停止")
 
     def get_server_stats(self) -> Dict:
         """获取服务器统计信息"""
