@@ -7,6 +7,7 @@ from typing import Any, Dict, List
 
 from config import Config
 from server import TCPServer
+from udp_server import UDPServer
 from utils.logger import setup_logger
 
 
@@ -127,7 +128,7 @@ def signal_handler(signum, frame):
 
 def main():
     """主函数"""
-    parser = argparse.ArgumentParser(description="TCP服务器仿真工具")
+    parser = argparse.ArgumentParser(description="TCP/UDP 服务器仿真工具")
     parser.add_argument("-p",
                         "--ports",
                         nargs="+",
@@ -135,6 +136,10 @@ def main():
                         default=[9999],
                         help="监听的端口列表 (默认: 9999)")
     parser.add_argument("--host", default="0.0.0.0", help="监听地址 (默认: 0.0.0.0)")
+    parser.add_argument("--protocol",
+                        choices=["tcp", "udp", "both"],
+                        default="tcp",
+                        help="协议类型 (默认: tcp)")
     parser.add_argument("--config", help="配置文件路径")
     parser.add_argument("--stats-interval",
                         type=int,
