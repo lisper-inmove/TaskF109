@@ -47,7 +47,7 @@ class SectionWidget(QGroupBox):
         self.setTitle(f"{self.__base_title} [{status}]")
 
     # ================= 按钮事件 =================
-    def __on_connect(self):
+    def __on_connect(self, _):
         """连接"""
         ip = self.__input1.text()
         port = self.__input2.text()

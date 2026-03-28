@@ -5,6 +5,7 @@ class ProtocolHeader:
 
     heartbeat = bytes([0xFF, 0x01])
     set_voltage = bytes([0xFF, 0x02])
+    set_fixed_voltage = bytes([0xFF, 0x03])
     start = 0xFF
     end = 0xFE
 
@@ -25,8 +26,8 @@ class Protocol:
     def set_voltage(cls, voltage):
         msg = bytearray()
         msg.extend(ProtocolHeader.set_voltage)
-        msg.append(0x00)
-        msg.append(0x01)
+        # msg.append(0x00)
+        # msg.append(0x01)
         msg.append((voltage >> 8) & 0xFF)
         msg.append(voltage & 0xFF)
         msg.append(ProtocolHeader.end)
@@ -41,6 +42,24 @@ class Protocol:
         msg.append(length & 0xFF)
         min_v = int(os.environ.get('VOLTAGE_MIN', 0))
         max_v = int(os.environ.get('VOLTAGE_MAX', 20000))
+        for voltage in voltages:
+            if not (min_v <= voltage <= max_v):
+                raise ValueError(
+                    f"Voltage {voltage} out of range ({min_v}~{max_v} mV)")
+            msg.append((voltage >> 8) & 0xFF)
+            msg.append(voltage & 0xFF)
+        msg.append(ProtocolHeader.end)
+        return msg
+
+    @classmethod
+    def set_fixed_voltage(cls, voltages):
+        msg = bytearray()
+        msg.extend(ProtocolHeader.set_fixed_voltage)
+        min_v = int(os.environ.get('VOLTAGE_MIN', 0))
+        max_v = int(os.environ.get('VOLTAGE_MAX', 20000))
+        fixed_number = int(os.environ.get("FIXED_NUMBER", 256))
+        if len(voltages) != fixed_number:
+            raise ValueError(f"Number of voltages != {fixed_number}")
         for voltage in voltages:
             if not (min_v <= voltage <= max_v):
                 raise ValueError(

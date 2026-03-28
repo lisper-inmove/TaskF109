@@ -6,7 +6,10 @@ from datetime import datetime
 from PyQt5.QtWidgets import QApplication, QMessageBox
 
 from enhanced_window import EnhancedWindow
+from log_config import logger_factory
 from log_config import main_logger as logger
+
+logger_factory.setup_exception_hook()
 
 
 def config():
@@ -16,6 +19,8 @@ def config():
         os.environ['VOLTAGE_MAX'] = '20000'
     if os.environ.get("PROTOCOL_TYPE") is None:
         os.environ["PROTOCOL_TYPE"] = "UDP"
+    if os.environ.get("FIXED_NUMBER") is None:
+        os.environ["FIXED_NUMBER"] = "256"
 
 
 def exception_hook(exc_type, exc_value, exc_traceback):

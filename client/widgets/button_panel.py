@@ -143,7 +143,7 @@ class ButtonPanel(QWidget):
         widget.setLayout(layout)
         self.__layout.addWidget(widget)
 
-    def __on_load_csv(self):
+    def __on_load_csv(self, _):
         filename, _ = QFileDialog.getOpenFileName(
             None,
             "选择CSV文件",

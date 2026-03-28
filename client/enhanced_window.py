@@ -87,7 +87,7 @@ class EnhancedWindow(QMainWindow):
 
         for name in DeviceEnums:
             section = SectionWidget(
-                name,
+                name.value,
                 self.__connect_device,
                 self.__disconnect,
             )

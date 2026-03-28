@@ -23,7 +23,8 @@ class Device:
         elif self.__protocol_type == 'udp':
             self.__transport: TransportStrategy = UDPTransport(ip, port, name)
         else:
-            raise ValueError(f"Unsupported protocol type: {protocol_type}")
+            raise ValueError(
+                f"Unsupported protocol type: {self.__protocol_type}")
 
     @property
     def failed(self):
@@ -55,12 +56,14 @@ class Device:
         self.send(msg)
 
     def send_multi_voltage(self, voltages):
-        msg = Protocol.set_multi_voltage(voltages)
+        msg = Protocol.set_fixed_voltage(voltages)
         logger.info(f"Send set multi voltage: {msg}")
         self.send(msg)
 
     def send(self, packet):
         """发送数据包并接收响应"""
+        if isinstance(packet, bytearray):
+            packet = bytes(packet)
         try:
             self.__transport.send(packet)
             return self.recv()

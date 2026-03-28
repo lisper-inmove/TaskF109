@@ -174,7 +174,7 @@ class UDPServer:
         Returns:
             Dict: 响应数据
         """
-        self.logger.info(f"处理来自 {client_address} 的消息: {message}")
+        # self.logger.info(f"处理来自 {client_address} 的消息: {message}")
 
         return self.protocol.create_response(success=True,
                                              message="消息处理成功",
