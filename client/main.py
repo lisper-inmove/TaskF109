@@ -1,4 +1,5 @@
 import os
+import signal
 import sys
 import traceback
 from datetime import datetime
@@ -41,6 +42,8 @@ def main():
     config()
     sys.excepthook = exception_hook
     app = QApplication(sys.argv)
+    # 设置Ctrl+C信号处理，优雅退出应用程序
+    signal.signal(signal.SIGINT, lambda sig, frame: app.quit())
     window = EnhancedWindow()
     window.show()
     sys.exit(app.exec_())

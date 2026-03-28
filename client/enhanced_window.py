@@ -2,6 +2,7 @@ import time
 from typing import Dict
 
 from PyQt5.QtCore import Qt, QThreadPool, pyqtSlot
+from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtWidgets import (QAction, QFrame, QHBoxLayout, QLabel, QLineEdit,
                              QMainWindow, QMessageBox, QSizePolicy, QSpinBox,
                              QVBoxLayout, QWidget)
@@ -34,6 +35,7 @@ class EnhancedWindow(QMainWindow):
         self.__thread_pool.setMaxThreadCount(10)
         self.__log_widget = LogWidget()
         self.__button_panel = ButtonPanel(self.__on_send_cmd)
+        self.__check_device_running = True
         self.__init()
 
     def __init(self):
@@ -66,7 +68,7 @@ class EnhancedWindow(QMainWindow):
         self.__thread_pool.start(self.__check_device)
 
     def __check_device(self):
-        while True:
+        while self.__check_device_running:
             devices = list(self.__controller.devices.values())
             for device in devices:
                 if device.connected:
@@ -220,3 +222,20 @@ class EnhancedWindow(QMainWindow):
         device.send_multi_voltage(task.data)
         self.__button_panel.set_busy(False)
         return True
+
+    def closeEvent(self, event: QCloseEvent):
+        """窗口关闭时清理资源"""
+        logger.info("Closing window, cleaning up resources...")
+        # 停止设备检查线程
+        self.__check_device_running = False
+        # 停止心跳线程
+        if self.__heartbeat_thread:
+            self.__heartbeat_thread.stop()
+        # 清理线程池
+        self.__thread_pool.clear()
+        self.__thread_pool.waitForDone(5000)  # 等待5秒
+        # 断开所有设备连接
+        for device in list(self.__controller.devices.values()):
+            device.disconnect()
+        logger.info("Resources cleaned up")
+        event.accept()
