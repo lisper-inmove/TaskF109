@@ -2,3 +2,4 @@
 __pycache__
 simu/tcp_server.log
 client/logs
+logs
